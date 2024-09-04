@@ -3,7 +3,7 @@
 # orig
 #RELEASE=raspotify
 #CARGOPROFILE="--profile raspotify"
-#REPO="-branch-raspotify --depth=1 https://github.com/JasonLG1979/librespot"
+#REPO="--branch=raspotify --depth=1 https://github.com/JasonLG1979/librespot"
 
 # dev (test)
 RELEASE=release
