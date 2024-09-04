@@ -9,6 +9,7 @@ RASPOTIFY_AUTHOR?=Jason Gray <jasonlevigray3@gmail.com>
 armhf:
 	$(DOCKER) build -t raspotify .
 	$(DOCKER) run \
+			--rm \
 			--volume "$(CURDIR):/mnt/raspotify" \
 			--env PERMFIX_UID="$$(id -u)" \
 			--env PERMFIX_GID="$$(id -g)" \
