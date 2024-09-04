@@ -1,5 +1,15 @@
 #!/bin/sh
 
+# orig
+#RELEASE=raspotify
+#CARGOPROFILE="--profile raspotify"
+#REPO="-branch-raspotify --depth=1 https://github.com/JasonLG1979/librespot"
+
+# dev (test)
+RELEASE=release
+CARGOPROFILE="--profile release"
+REPO="--branch=dev --depth=1 https://github.com/librespot-org/librespot"
+
 if [ "$INSIDE_DOCKER_CONTAINER" != "1" ]; then
 	echo "Must be run in docker container"
 	exit 1
@@ -41,10 +51,9 @@ packages() {
 		# https://github.com/librespot-org/librespot does not regularly or
 		# really ever update their dependencies on released versions.
 		# https://github.com/librespot-org/librespot/pull/1068
-		echo "Get https://github.com/JasonLG1979/librespot/tree/raspotify..."
-		git clone https://github.com/JasonLG1979/librespot
+		echo "Get '${REPO}'..."
+		git clone ${REPO}
 		cd librespot
-		git checkout raspotify
 		cd /mnt/raspotify
 	fi
 
@@ -65,12 +74,12 @@ packages() {
 	LIBRESPOT_HASH="$(git rev-parse HEAD | cut -c 1-7 2>/dev/null || echo unknown)"
 
 	echo "Build Librespot binary..."
-	cargo build --jobs "$(nproc)" --profile raspotify --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend"
+	cargo build --jobs "$(nproc)" ${CARGOPROFILE} --target "$BUILD_TARGET" --no-default-features --features "alsa-backend pulseaudio-backend"
 
 	echo "Copy Librespot binary to package root..."
 	cd /mnt/raspotify
 
-	cp -v /build/"$BUILD_TARGET"/raspotify/librespot raspotify/usr/bin
+	cp -v /build/"$BUILD_TARGET"/${RELEASE}/librespot raspotify/usr/bin
 
 	# Compute final package version + filename for Debian control file
 	DEB_PKG_VER="${RASPOTIFY_GIT_VER}~librespot.${LIBRESPOT_VER}-${LIBRESPOT_HASH}"

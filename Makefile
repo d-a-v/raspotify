@@ -1,12 +1,14 @@
 .PHONY: all armhf arm64 amd64 clean distclean
 .DEFAULT_GOAL := all
+#DOCKER=docker
+DOCKER=podman
+
 
 RASPOTIFY_AUTHOR?=Jason Gray <jasonlevigray3@gmail.com>
 
 armhf:
-	docker build -t raspotify .
-	docker run \
-			--rm \
+	$(DOCKER) build -t raspotify .
+	$(DOCKER) run \
 			--volume "$(CURDIR):/mnt/raspotify" \
 			--env PERMFIX_UID="$$(id -u)" \
 			--env PERMFIX_GID="$$(id -g)" \
@@ -15,8 +17,8 @@ armhf:
 		raspotify /mnt/raspotify/build.sh
 
 arm64:
-	docker build -t raspotify .
-	docker run \
+	$(DOCKER) build -t raspotify .
+	$(DOCKER) run \
 			--rm \
 			--volume "$(CURDIR):/mnt/raspotify" \
 			--env PERMFIX_UID="$$(id -u)" \
@@ -26,8 +28,8 @@ arm64:
 		raspotify /mnt/raspotify/build.sh
 
 amd64:
-	docker build -t raspotify .
-	docker run \
+	$(DOCKER) build -t raspotify .
+	$(DOCKER) run \
 			--rm \
 			--volume "$(CURDIR):/mnt/raspotify" \
 			--env PERMFIX_UID="$$(id -u)" \
@@ -37,8 +39,8 @@ amd64:
 		raspotify /mnt/raspotify/build.sh
 
 all:
-	docker build -t raspotify .
-	docker run \
+	$(DOCKER) build -t raspotify .
+	$(DOCKER) run \
 			--rm \
 			--volume "$(CURDIR):/mnt/raspotify" \
 			--env PERMFIX_UID="$$(id -u)" \
@@ -51,4 +53,4 @@ clean:
 	rm -rf *.deb librespot asound-conf-wizard raspotify/usr/bin/librespot raspotify/usr/share raspotify/DEBIAN/control apt-repo
 
 distclean: clean
-	docker rmi -f raspotify || true
+	$(DOCKER) rmi -f raspotify || true
